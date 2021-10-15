@@ -80,10 +80,13 @@ I plot a series of scatterplots to observe how the total comment sample, the hig
 
 
 ```python
-sns.histplot(data=comments, x='compound', bins=10)
-comments['compound'].value_counts()
+sns.relplot(x="compound", y="score", data=comments)
+sentiment = comments[~(comments['score'] < 300)]
+sns.relplot(x="compound", y="score", data=sentiment)
+sentiment = comments[~(comments['score'] > -50)]
+sns.relplot(x="compound", y="score", data=sentiment)
 ```
-!ADD COMBINED IMAGE OUTPUT
+![alt text](/images/postvotes.png)
 
 Through a Spearman's correlation that accounts for nonlinearity. 
 
@@ -92,7 +95,7 @@ scorecomp = comments[['score', 'compound']].copy()
 corrrelation = scorecomp.corr(method="spearman")
 print(corrrelation)
 ```
-![alt text](/images/postvotes.png)
+![alt text](/images/correlation.png)
 
 This demo captures my preliminary steps towards building Long-Short Term Memory (LSTM) neural network classifier of this dataset where I will be using sentiment scores as a key predictor.
 
