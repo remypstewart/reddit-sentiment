@@ -30,6 +30,7 @@ query = api.search_comments(link_ids = submissions,
 comments = pd.DataFrame([comment.d_ for comment in query])
 comments
 ```
+![alt text](/comments.png)
 
 The sentiment dictionary I decided to employ to produce sentiment scores of each comment is VADER, which has a developed lexicon well-suited for social media domains to accurately capture the sentiment of syntactically complex sentences. I therefore want to conduct minimal text preprocessing compared to other NLP methods since VADER accounts for text stylization relevant to punctuation, capitalization, and emoji use to quantify sentence sentiment. My preprocessing is therefore driven primarily by the need to remove substantively meaningless components of the text including “/n” line breaks or linked URLs. I additionally remove textually duplicate comments or comments that are 5 words or less in length due to the limited information regarding expressed sentiment. 
 
@@ -45,7 +46,6 @@ comments['body'] = comments['body'].apply(lambda x: re.split('https:\/\/.*', str
 comments
 
 ```
-
 
 
 
