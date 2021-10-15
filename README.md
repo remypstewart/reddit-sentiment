@@ -59,12 +59,14 @@ pd.set_option('display.max_colwidth', 600)
 text = comments[['body', 'compound']].copy()
 text.sort_values(by='compound')[:10]
 ```
+![alt text](/images/positive.png)
 
 I then consider the equivalent for the top ten lowest-scoring and therefore most negative comments. Key themes throughout these posts includes local crime news, mentions of discrimination,  
 
 ```python
 text.sort_values(by='compound', ascending = False)[:10]
 ```
+![alt text](/images/negative.png)
 
 Frequency distribution of sentiment scores . The histogram demonstrates a sizable mode at the bin spanning from a 0 neutral score to a slightly positive 0.2. Through a quick score value count I confirm my immediate suspension after generating the histogram that this is largely promoted by the disporportionate number of emotionally neutral comments over those that express a particular sentiment. 
 
@@ -72,7 +74,7 @@ Frequency distribution of sentiment scores . The histogram demonstrates a sizabl
 sns.histplot(data=comments, x='compound', bins=10)
 comments['compound'].value_counts()
 ```
-!ADD COMBINED IMAGE OUTPUT
+![alt text](/images/frequency.png)
 
 I plot a series of scatterplots to observe how the total comment sample, the highest-scoring comments from other users' upvotes, and the most downvoted comments all potentially vary in their expressed sentiment.  I confirm 
 
@@ -90,6 +92,7 @@ scorecomp = comments[['score', 'compound']].copy()
 corrrelation = scorecomp.corr(method="spearman")
 print(corrrelation)
 ```
+![alt text](/images/postvotes.png)
 
 This demo captures my preliminary steps towards building Long-Short Term Memory (LSTM) neural network classifier of this dataset where I will be using sentiment scores as a key predictor.
 
