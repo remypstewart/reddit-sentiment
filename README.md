@@ -1,8 +1,5 @@
 ### [Return to Portfolio Directory](https://remypstewart.github.io/)
 
-
-# reddit-sentiment
-
 Opinion mining and sentiment analysis is an NLP subtopic of joint interest to both academia and industry, particularly as applied to social media. Understanding individual opinions and emotional expressions via the public accessibility of social media offers a timely pulse on politics, culture, customer satisfaction, and beyond. Within my own research, I am specifically interested in understanding how the use of expressed sentiments in social media posts influences post popularity and community engagement when debating regional politics. I am currently investigating this through a scraped dataset of the [r/SanFrancisco](https://www.reddit.com/r/sanfrancisco/) subreddit. 
 
 To obtain my data source, I first placed a query through the Pushshift Reddit API via the PSAW wrapper. Pushshift provides a streamlined data aggregation of Reddit to effectively facilitate large data requests. The following call extracts all comments posted on a selection of random r/sanfrancisco submissions since the start of 2021 and processes the output through a generator expression into a Pandas dataframe.
@@ -47,9 +44,7 @@ comments['body'] = comments['body'].apply(lambda x: re.split('https:\/\/.*', str
 
 comments
 ```
-![alt text](/images/preprocessing.png)
-
-## FIX THE TEXT PREPROCESSING!
+![alt text](/images/preprocess.png)
 
 VADER compound scores captures a normalized result of the positive, negative, and neutral scores of the words within the post, providing a complete representation of the net sentiment of each comment. The compound score scale spans from 1 as comments with completely positive expressed sentiment, -1 as completely negative, and 0 as neutral comments without a particular sentiment valence. After producing the compund scores for each record, I inspect the ten most high-scoring positive comments. I note first that these feature longer comments whose likely sum greater count of positive tokens over shorter posts skews their scores upwards. Topically, these posts commonly feature explanations of local neighborhoods and restaurants, or extensive responses within a discussion that are polite and intentionally friendly. 
 
@@ -59,14 +54,14 @@ analyzer = SentimentIntensityAnalyzer()
 comments['compound'] = [analyzer.polarity_scores(x)['compound'] for x in comments['body']]
 pd.set_option('display.max_colwidth', 600)
 text = comments[['body', 'compound']].copy()
-text.sort_values(by='compound')[:10]
+text.sort_values(by='compound', ascending = False)[:10]
 ```
 ![alt text](/images/positive.png)
 
 I then consider the equivalent for the top ten lowest-scoring and therefore most negative comments. Key themes throughout these also comparatively longer posts includes local crime news, mentions of discrimination, and hip-hop lyrics. Words such as "racist" and "killed" are likely driving their negative sentiment scores. 
 
 ```python
-text.sort_values(by='compound', ascending = False)[:10]
+text.sort_values(by='compound')[:10]
 ```
 ![alt text](/images/negative.png)
 
