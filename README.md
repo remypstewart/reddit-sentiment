@@ -49,8 +49,6 @@ comments
 ```
 ![alt text](/images/preprocessing.png)
 
-## FIX THE TEXT PREPROCESSING!
-
 VADER compound scores captures a normalized result of the positive, negative, and neutral scores of the words within the post, providing a complete representation of the net sentiment of each comment. The compound score scale spans from 1 as comments with completely positive expressed sentiment, -1 as completely negative, and 0 as neutral comments without a particular sentiment valence. After producing the compund scores for each record, I inspect the ten most high-scoring positive comments. I note first that these feature longer comments whose likely sum greater count of positive tokens over shorter posts skews their scores upwards. Topically, these posts commonly feature explanations of local neighborhoods and restaurants, or extensive responses within a discussion that are polite and intentionally friendly. 
 
 ```python
