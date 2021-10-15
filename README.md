@@ -59,14 +59,14 @@ analyzer = SentimentIntensityAnalyzer()
 comments['compound'] = [analyzer.polarity_scores(x)['compound'] for x in comments['body']]
 pd.set_option('display.max_colwidth', 600)
 text = comments[['body', 'compound']].copy()
-text.sort_values(by='compound')[:10]
+text.sort_values(by='compound', ascending = False)[:10]
 ```
 ![alt text](/images/positive.png)
 
 I then consider the equivalent for the top ten lowest-scoring and therefore most negative comments. Key themes throughout these also comparatively longer posts includes local crime news, mentions of discrimination, and hip-hop lyrics. Words such as "racist" and "killed" are likely driving their negative sentiment scores. 
 
 ```python
-text.sort_values(by='compound', ascending = False)[:10]
+text.sort_values(by='compound')[:10]
 ```
 ![alt text](/images/negative.png)
 
