@@ -1,8 +1,5 @@
 ### [Return to Portfolio Directory](https://remypstewart.github.io/)
 
-
-# reddit-sentiment
-
 Opinion mining and sentiment analysis is an NLP subtopic of joint interest to both academia and industry, particularly as applied to social media. Understanding individual opinions and emotional expressions via the public accessibility of social media offers a timely pulse on politics, culture, customer satisfaction, and beyond. Within my own research, I am specifically interested in understanding how the use of expressed sentiments in social media posts influences post popularity and community engagement when debating regional politics. I am currently investigating this through a scraped dataset of the [r/SanFrancisco](https://www.reddit.com/r/sanfrancisco/) subreddit. 
 
 To obtain my data source, I first placed a query through the Pushshift Reddit API via the PSAW wrapper. Pushshift provides a streamlined data aggregation of Reddit to effectively facilitate large data requests. The following call extracts all comments posted on a selection of random r/sanfrancisco submissions since the start of 2021 and processes the output through a generator expression into a Pandas dataframe.
