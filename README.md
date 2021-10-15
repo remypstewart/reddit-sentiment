@@ -35,7 +35,7 @@ The sentiment dictionary I decided to employ to produce sentiment scores of each
 
 ```python
 
-comments.drop_duplicates(subset=['body'])
+comments = comments.drop_duplicates(subset=['body'])
 comments['word_count'] = comments['body'].str.findall(r'(\w+)').str.len()
 comments = comments[~(comments['word_count'] <= 5)] 
 comments['body'] = comments['body'].replace(r'\n',' ', regex=True)
