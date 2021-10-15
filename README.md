@@ -30,7 +30,7 @@ query = api.search_comments(link_ids = submissions,
 comments = pd.DataFrame([comment.d_ for comment in query])
 comments
 ```
-![alt text](/comments.png)
+![alt text](/images/comments.png)
 
 The sentiment dictionary I decided to employ to produce sentiment scores of each comment is VADER, which has a developed lexicon well-suited for social media domains to accurately capture the sentiment of syntactically complex sentences. I therefore want to conduct minimal text preprocessing compared to other NLP methods since VADER accounts for text stylization relevant to punctuation, capitalization, and emoji use to quantify sentence sentiment. My preprocessing is therefore driven primarily by the need to remove substantively meaningless components of the text including “/n” line breaks or linked URLs. I additionally remove textually duplicate comments or comments that are 5 words or less in length due to the limited information regarding expressed sentiment. 
 
@@ -44,8 +44,52 @@ comments['body'] = comments['body'].replace(r'&gt',' ', regex=True)
 comments['body'] = comments['body'].apply(lambda x: re.split('https:\/\/.*', str(x))[0])
 
 comments
+```
+![alt text](/images/preprocessing.png)
 
+
+VADER compound scores 
+results of the positive, negative, and neutral word scores within the post 
+
+```python
+
+analyzer = SentimentIntensityAnalyzer()
+comments['compound'] = [analyzer.polarity_scores(x)['compound'] for x in comments['body']]
+pd.set_option('display.max_colwidth', 600)
+text = comments[['body', 'compound']].copy()
+text.sort_values(by='compound')[:10]
 ```
 
+I then consider the equivalent for the top ten lowest-scoring and therefore most negative comments. Key themes throughout these posts includes local crime news, mentions of discrimination,  
 
+```python
+text.sort_values(by='compound', ascending = False)[:10]
+```
+
+Frequency distribution of sentiment scores . The histogram demonstrates a sizable mode at the bin spanning from a 0 neutral score to a slightly positive 0.2. Through a quick score value count I confirm my immediate suspension after generating the histogram that this is largely promoted by the disporportionate number of emotionally neutral comments over those that express a particular sentiment. 
+
+```python
+sns.histplot(data=comments, x='compound', bins=10)
+comments['compound'].value_counts()
+```
+!ADD COMBINED IMAGE OUTPUT
+
+I plot a series of scatterplots to observe how the total comment sample, the highest-scoring comments from other users' upvotes, and the most downvoted comments all potentially vary in their expressed sentiment.  I confirm 
+
+
+```python
+sns.histplot(data=comments, x='compound', bins=10)
+comments['compound'].value_counts()
+```
+!ADD COMBINED IMAGE OUTPUT
+
+Through a Spearman's correlation that accounts for nonlinearity. 
+
+```python
+scorecomp = comments[['score', 'compound']].copy()
+corrrelation = scorecomp.corr(method="spearman")
+print(corrrelation)
+```
+
+This demo captures my preliminary steps towards building Long-Short Term Memory (LSTM) neural network classifier of this dataset where I will be using sentiment scores as a key predictor.
 
