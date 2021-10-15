@@ -1,5 +1,7 @@
-# reddit-sentiment
+### [Return to Portfolio Directory](https://remypstewart.github.io/)
 
+
+# reddit-sentiment
 
 Opinion mining and sentiment analysis is an NLP subtopic of joint interest to both academia and industry, particularly as applied to social media. Understanding individual opinions and emotional expressions via the public accessibility of social media offers a timely pulse on politics, culture, customer satisfaction, and beyond. Within my own research, I am specifically interested in understanding how the use of expressed sentiments in social media posts influences post popularity and community engagement when debating regional politics. I am currently investigating this through a scraped dataset of the [r/SanFrancisco](https://www.reddit.com/r/sanfrancisco/) subreddit. 
 
@@ -30,9 +32,9 @@ query = api.search_comments(link_ids = submissions,
 comments = pd.DataFrame([comment.d_ for comment in query])
 comments
 ```
-![alt text](/comments.png)
+![alt text](/images/comments.png)
 
-The sentiment dictionary I decided to employ to produce sentiment scores of each comment is VADER, which has a developed lexicon well-suited for social media domains to accurately capture the sentiment of syntactically complex sentences. I therefore want to conduct minimal text preprocessing compared to other NLP methods since VADER accounts for text stylization relevant to punctuation, capitalization, and emoji use to quantify sentence sentiment. My preprocessing is therefore driven primarily by the need to remove substantively meaningless components of the text including “/n” line breaks or linked URLs. I additionally remove textually duplicate comments or comments that are 5 words or less in length due to the limited information regarding expressed sentiment. 
+The sentiment dictionary I decided to employ to produce sentiment scores of each comment is VADER (Hutto and Gilbert 2014), which has a developed lexicon well-suited for social media domains to accurately capture the sentiment of syntactically complex sentences. I therefore want to conduct minimal text preprocessing compared to other NLP methods since VADER accounts for text stylization relevant to punctuation, capitalization, and emoji use to quantify sentence sentiment. My preprocessing is therefore driven primarily by the need to remove substantively meaningless components of the text including “/n” line breaks or linked URLs. I additionally remove textually duplicate comments or comments that are 5 words or less in length due to the limited information regarding expressed sentiment. This reduces the data set size from an original 3.X million to 1.X million comments. 
 
 ```python
 
@@ -44,8 +46,59 @@ comments['body'] = comments['body'].replace(r'&gt',' ', regex=True)
 comments['body'] = comments['body'].apply(lambda x: re.split('https:\/\/.*', str(x))[0])
 
 comments
-
 ```
+![alt text](/images/preprocessing.png)
 
+## FIX THE TEXT PREPROCESSING!
 
+VADER compound scores captures a normalized result of the positive, negative, and neutral scores of the words within the post, providing a complete representation of the net sentiment of each comment. The compound score scale spans from 1 as comments with completely positive expressed sentiment, -1 as completely negative, and 0 as neutral comments without a particular sentiment valence. After producing the compund scores for each record, I inspect the ten most high-scoring positive comments. I note first that these feature longer comments whose likely sum greater count of positive tokens over shorter posts skews their scores upwards. Topically, these posts commonly feature explanations of local neighborhoods and restaurants, or extensive responses within a discussion that are polite and intentionally friendly. 
+
+```python
+
+analyzer = SentimentIntensityAnalyzer()
+comments['compound'] = [analyzer.polarity_scores(x)['compound'] for x in comments['body']]
+pd.set_option('display.max_colwidth', 600)
+text = comments[['body', 'compound']].copy()
+text.sort_values(by='compound')[:10]
+```
+![alt text](/images/positive.png)
+
+I then consider the equivalent for the top ten lowest-scoring and therefore most negative comments. Key themes throughout these also comparatively longer posts includes local crime news, mentions of discrimination, and hip-hop lyrics. Words such as "racist" and "killed" are likely driving their negative sentiment scores. 
+
+```python
+text.sort_values(by='compound', ascending = False)[:10]
+```
+![alt text](/images/negative.png)
+
+After inspecting the comments themselves, I turn to the frequency distribution of sentiment scores as clustered between 0.2 sized bins across the -1 to 1 score range. The histogram demonstrates a sizable mode with the bin spanning from a 0 neutral score to a slightly positive 0.2. Through a quick score value count I confirm my immediate suspension after generating the histogram that this is largely promoted by the disporportionate number of emotionally neutral comments over those that express a particular sentiment. Comments on r/sanfrancisco therefore appear to be roughly divided between emotionally aligned and non-sentiment expressive posts, which are often factual, question-based, or simply responsive to a previous post without an conveyed sentiment. 
+
+```python
+sns.histplot(data=comments, x='compound', bins=10)
+comments['compound'].value_counts()
+```
+![alt text](/images/frequency.png)
+
+I plot a series of scatterplots to observe how the total comment sample, the highest-scoring comments from other users' upvotes, and the most downvoted comments all potentially vary in their expressed sentiment. The sum distribution of comments in the first histogram cover the range of expressed sentiment without any noticable skew towards positive or negative sentiment. The top-scoring comments by other users appears to lean slightly negative, while the most downvoted comments also have a slight clustering to the negative but also feature a suprisingly high number of positive sentiment posts. 
+
+```python
+sns.relplot(x="compound", y="score", data=comments)
+sentiment = comments[~(comments['score'] < 300)]
+sns.relplot(x="compound", y="score", data=sentiment)
+sentiment = comments[~(comments['score'] > -50)]
+sns.relplot(x="compound", y="score", data=sentiment)
+```
+![alt text](/images/postvotes.png)
+
+Through a Spearman's correlation that accounts for nonlinear relationships between variables, I statistically confirm that there is no signficant relationship between expressed sentiment and a comment's score as provided by the subreddit user community. 
+
+```python
+scorecomp = comments[['score', 'compound']].copy()
+corrrelation = scorecomp.corr(method="spearman")
+print(corrrelation)
+```
+![alt text](/images/correlation.png)
+
+This demo captures my preliminary EDA steps towards building Long-Short Term Memory (LSTM) neural network classifier of this dataset where I will be using sentiment scores as a key predictor. I highlight the data collection, text preprocessing, and sentiment classification steps that can be easily replicated across a variety of text corpuses to investigate a range of topics relevant to expressed opinions within online communities. 
+
+Reference: Hutto, C.J. and Eric Gilbert. 2014. "VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text." _Proceeding of the Eighth International AAAI Conference on Weblogs and Social Media_: 216-225. 
 
