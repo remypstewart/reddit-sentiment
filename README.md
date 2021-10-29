@@ -95,5 +95,5 @@ print(corrrelation)
 
 This demo captures my preliminary EDA steps towards building a Long-Short Term Memory (LSTM) neural network classifier of this dataset where I will be using sentiment scores as a key predictor. I highlight the data collection, text preprocessing, and sentiment classification steps that can be easily replicated across a variety of text corpuses to investigate a range of topics relevant to expressed opinions within online communities. 
 
-Reference: Hutto, C.J. and Eric Gilbert. 2014. "VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text." _Proceeding of the Eighth International AAAI Conference on Weblogs and Social Media_: 216-225. 
+**Reference:** Hutto, C.J. and Eric Gilbert. 2014. "VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text." _Proceeding of the Eighth International AAAI Conference on Weblogs and Social Media_: 216-225. 
 
